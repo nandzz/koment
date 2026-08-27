@@ -8,6 +8,10 @@
     <string>Koment</string>
     <key>CFBundleExecutable</key>
     <string>Koment</string>
+    <key>CFBundleIconFile</key>
+    <string>koment-app</string>
+    <key>CFBundleIconName</key>
+    <string>koment-app</string>
     <key>CFBundleIdentifier</key>
     <string>com.nandzz.koment</string>
     <key>CFBundlePackageType</key>

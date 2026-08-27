@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B4BBA133040662900C9B294 /* koment-app.icon in Resources */ = {isa = PBXBuildFile; fileRef = 1B4BBA123040662900C9B294 /* koment-app.icon */; };
+		1B4BBA19304066B800C9B294 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B4BBA18304066B800C9B294 /* Assets.xcassets */; };
+		1B4BBA8930406A3D00C9B294 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B4BBA8830406A3D00C9B294 /* logo.png */; };
 		CC0000000000000000000040 /* libKomentCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000008 /* libKomentCore.a */; };
 		CC0000000000000000000041 /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = CC0000000000000000000051 /* SwiftTerm */; };
 		CC0000000000000000000042 /* libKomentCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000008 /* libKomentCore.a */; };
@@ -47,13 +50,6 @@
 			remoteGlobalIDString = CC0000000000000000000011;
 			remoteInfo = KomentCore;
 		};
-		CC00000000000000000000A4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC0000000000000000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CC0000000000000000000013;
-			remoteInfo = MCPServer;
-		};
 		CC000000000000000000003C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CC0000000000000000000001 /* Project object */;
@@ -82,6 +78,13 @@
 			remoteGlobalIDString = CC0000000000000000000010;
 			remoteInfo = Koment;
 		};
+		CC00000000000000000000A4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC0000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CC0000000000000000000013;
+			remoteInfo = MCPServer;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -99,16 +102,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1B4BBA123040662900C9B294 /* koment-app.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "koment-app.icon"; sourceTree = "<group>"; };
+		1B4BBA18304066B800C9B294 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1B4BBA8830406A3D00C9B294 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
 		CC0000000000000000000007 /* Koment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Koment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC0000000000000000000008 /* libKomentCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKomentCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC0000000000000000000009 /* KomentMCP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = KomentMCP; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC000000000000000000000A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CC00000000000000000000B0 /* koment.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = koment.md; sourceTree = "<group>"; };
-		CC00000000000000000000B2 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 		CC000000000000000000000C /* libMCPServer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMCPServer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC000000000000000000000D /* KomentCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KomentCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC000000000000000000000E /* MCPServerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MCPServerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC000000000000000000000F /* KomentTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KomentTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC00000000000000000000B0 /* koment.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = koment.md; sourceTree = "<group>"; };
+		CC00000000000000000000B2 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -184,6 +190,9 @@
 		CC0000000000000000000002 = {
 			isa = PBXGroup;
 			children = (
+				1B4BBA8830406A3D00C9B294 /* logo.png */,
+				1B4BBA123040662900C9B294 /* koment-app.icon */,
+				1B4BBA18304066B800C9B294 /* Assets.xcassets */,
 				CC0000000000000000000004 /* Sources/Koment */,
 				CC0000000000000000000005 /* Sources/KomentCore */,
 				CC0000000000000000000006 /* Sources/KomentMCP */,
@@ -388,19 +397,19 @@
 					CC0000000000000000000012 = {
 						CreatedOnToolsVersion = 26.1.1;
 					};
-						CC0000000000000000000013 = {
-							CreatedOnToolsVersion = 26.1.1;
-						};
-						CC0000000000000000000014 = {
-							CreatedOnToolsVersion = 26.1.1;
-						};
-						CC0000000000000000000015 = {
-							CreatedOnToolsVersion = 26.1.1;
-						};
-						CC0000000000000000000016 = {
-							CreatedOnToolsVersion = 26.1.1;
-							TestTargetID = CC0000000000000000000010;
-						};
+					CC0000000000000000000013 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					CC0000000000000000000014 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					CC0000000000000000000015 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					CC0000000000000000000016 = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = CC0000000000000000000010;
+					};
 				};
 			};
 			buildConfigurationList = CC0000000000000000000070 /* Build configuration list for PBXProject "Koment" */;
@@ -435,6 +444,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B4BBA8930406A3D00C9B294 /* logo.png in Resources */,
+				1B4BBA133040662900C9B294 /* koment-app.icon in Resources */,
+				1B4BBA19304066B800C9B294 /* Assets.xcassets in Resources */,
 				CC00000000000000000000B1 /* koment.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -586,6 +598,7 @@
 		CC0000000000000000000062 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "koment-app";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -595,7 +608,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nandzz.koment";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nandzz.koment;
 				PRODUCT_NAME = Koment;
 				SWIFT_VERSION = 5.0;
 			};
@@ -604,6 +617,7 @@
 		CC0000000000000000000063 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "koment-app";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -613,7 +627,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nandzz.koment";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nandzz.koment;
 				PRODUCT_NAME = Koment;
 				SWIFT_VERSION = 5.0;
 			};
@@ -684,7 +698,7 @@
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nandzz.koment.KomentCoreTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nandzz.koment.KomentCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -695,7 +709,7 @@
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nandzz.koment.KomentCoreTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nandzz.koment.KomentCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -706,7 +720,7 @@
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nandzz.koment.MCPServerTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nandzz.koment.MCPServerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -717,7 +731,7 @@
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nandzz.koment.MCPServerTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nandzz.koment.MCPServerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -729,7 +743,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nandzz.koment.KomentTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nandzz.koment.KomentTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Koment.app/Contents/MacOS/Koment";
@@ -742,7 +756,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nandzz.koment.KomentTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nandzz.koment.KomentTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Koment.app/Contents/MacOS/Koment";

@@ -55,9 +55,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func buildStatusItem() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        item.button?.image = NSImage(systemSymbolName: "text.bubble", accessibilityDescription: "Comments")
+        item.button?.image = statusItemImage()
         item.menu = buildMenu()
         statusItem = item
+    }
+
+    private func statusItemImage() -> NSImage? {
+        let fallback = NSImage(systemSymbolName: "text.bubble", accessibilityDescription: "Comments")
+        guard let image = NSImage(named: "komment-icon") else { return fallback }
+        let height: CGFloat = 18
+        let width = image.size.height > 0 ? height * image.size.width / image.size.height : height
+        image.size = NSSize(width: width, height: height)
+        image.isTemplate = true
+        image.accessibilityDescription = "Comments"
+        return image
     }
 
     private func buildMenu() -> NSMenu {
