@@ -2,8 +2,10 @@ CODE_SIGN_STYLE = Manual
 CODE_SIGN_IDENTITY = -
 DEVELOPMENT_TEAM =
 PROVISIONING_PROFILE_SPECIFIER =
-OTHER_CODE_SIGN_FLAGS =
+OTHER_CODE_SIGN_FLAGS = --timestamp
 OTHER_CODE_SIGN_FLAGS[config=Debug] = --timestamp=none
+CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO
+CODE_SIGN_INJECT_BASE_ENTITLEMENTS[config=Debug] = YES
 
 // Copy Signing.local.xcconfig.example to Signing.local.xcconfig to sign with your own identity.
 #include? "Signing.local.xcconfig"
