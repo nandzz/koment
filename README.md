@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="koment-app.icon/Assets/comments.png" width="96" alt="Koment">
+<img src="logo.png" width="120" alt="Koment">
 
 # Koment
 
