@@ -1,0 +1,143 @@
+name: Update the Homebrew tap
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The release tag to publish, for example v0.1.0
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  TAP_REPOSITORY: nandzz/homebrew-koment
+  CASK_PATH: Casks/koment.rb
+
+jobs:
+  bump:
+    if: github.event_name == 'workflow_dispatch' || github.event.release.prerelease == false
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check that the tap token is present
+        env:
+          TAP_TOKEN: ${{ secrets.TAP_TOKEN }}
+        run: |
+          if [ -z "$TAP_TOKEN" ]; then
+              echo "::error::the TAP_TOKEN secret is not set — see docs/DEVELOPMENT.md"
+              exit 1
+          fi
+
+      - name: Read the version from the tag
+        id: release
+        env:
+          TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          VERSION="${TAG#v}"
+          if [ -z "$VERSION" ]; then
+              echo "::error::the tag '$TAG' carries no version"
+              exit 1
+          fi
+          {
+              echo "tag=$TAG"
+              echo "version=$VERSION"
+              echo "asset=Koment-$VERSION.dmg"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Read the checksum of the release asset
+        id: checksum
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          TAG: ${{ steps.release.outputs.tag }}
+          ASSET: ${{ steps.release.outputs.asset }}
+        run: |
+          set -euo pipefail
+          for ATTEMPT in 1 2 3 4 5 6; do
+              if gh release download "$TAG" --repo "$REPOSITORY" --pattern "$ASSET" --clobber; then
+                  break
+              fi
+              if [ "$ATTEMPT" = 6 ]; then
+                  echo "::error::$ASSET is not attached to $TAG"
+                  exit 1
+              fi
+              echo "$ASSET is not there yet — waiting 30s"
+              sleep 30
+          done
+          SHA="$(sha256sum "$ASSET" | cut -d' ' -f1)"
+          if ! printf '%s' "$SHA" | grep -Eq '^[0-9a-f]{64}$'; then
+              echo "::error::could not read a checksum from $ASSET"
+              exit 1
+          fi
+          echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
+          echo "$ASSET is $SHA"
+
+      - name: Check out the tap
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TAP_REPOSITORY }}
+          token: ${{ secrets.TAP_TOKEN }}
+          path: tap
+
+      - name: Bump the cask
+        id: bump
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          SHA: ${{ steps.checksum.outputs.sha256 }}
+        run: |
+          set -euo pipefail
+          CASK="tap/$CASK_PATH"
+          sed -i "s|^  version \".*\"$|  version \"$VERSION\"|" "$CASK"
+          sed -i "s|^  sha256 \".*\"$|  sha256 \"$SHA\"|" "$CASK"
+
+          grep -Fq "  version \"$VERSION\"" "$CASK" || { echo "::error::the version did not apply"; exit 1; }
+          grep -Fq "  sha256 \"$SHA\"" "$CASK" || { echo "::error::the checksum did not apply"; exit 1; }
+
+          if git -C tap diff --quiet; then
+              echo "changed=false" >> "$GITHUB_OUTPUT"
+              echo "the cask already names $VERSION with this checksum"
+          else
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+              git -C tap --no-pager diff
+          fi
+
+      - name: Push the tap
+        if: steps.bump.outputs.changed == 'true'
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          cd tap
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Koment $VERSION"
+          git push
+
+      - name: Say what happened
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          SHA: ${{ steps.checksum.outputs.sha256 }}
+          CHANGED: ${{ steps.bump.outputs.changed }}
+        run: |
+          {
+              echo "### Homebrew tap"
+              echo
+              if [ "$CHANGED" = "true" ]; then
+                  echo "\`$TAP_REPOSITORY\` now installs **Koment $VERSION**."
+              else
+                  echo "\`$TAP_REPOSITORY\` already installed **Koment $VERSION**. Nothing to push."
+              fi
+              echo
+              echo "\`\`\`"
+              echo "version  $VERSION"
+              echo "sha256   $SHA"
+              echo "\`\`\`"
+              echo
+              echo "\`\`\`sh"
+              echo "brew update && brew upgrade --cask koment"
+              echo "\`\`\`"
+          } >> "$GITHUB_STEP_SUMMARY"

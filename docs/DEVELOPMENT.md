@@ -152,3 +152,25 @@ brew audit --cask --online nandzz/koment/koment
 ```
 
 Leave `--new` off. It adds the notability rule above, which applies only to `homebrew/cask`.
+
+### The tap updates itself
+
+`.github/workflows/update-homebrew-tap.yml` does the bump for you. When you publish a release it
+reads the version from the tag, downloads `Koment-<version>.dmg`, reads its SHA-256, writes both
+into the cask and pushes the tap. A prerelease is skipped. `workflow_dispatch` runs it again for a
+tag you name, which is the way to recover from a failed run.
+
+It needs one secret, `TAP_TOKEN`, because the default `GITHUB_TOKEN` cannot write to another
+repository. Make a fine-grained personal access token with **Contents: read and write** on
+`nandzz/homebrew-koment` alone, then:
+
+```bash
+gh secret set TAP_TOKEN --repo nandzz/koment
+```
+
+The workflow fails on its first step with a clear message if the secret is absent. It also stops
+if the DMG is not attached to the release, after waiting for it for three minutes — an asset
+uploaded a little after the release appears is normal.
+
+You still bump `CFBundleShortVersionString` and run `Scripts/release.sh` by hand, because the
+build has to be signed and notarized on a Mac that holds your Developer ID.
