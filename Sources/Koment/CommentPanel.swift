@@ -87,27 +87,21 @@ struct CommentPanelView: View {
     let onCancel: () -> Void
 
     @Environment(\.theme) private var theme
-    @Namespace private var glass
     @State private var note = ""
     @State private var revealed = false
 
     var body: some View {
-        GlassEffectContainer(spacing: theme.gap) {
-            VStack(alignment: .leading, spacing: theme.gap) {
-                header
-                path
-                snippet
-                editor
-                footer
-            }
-            .padding(.horizontal, theme.cardInset)
-            .padding(.top, theme.titlebarInset)
-            .padding(.bottom, theme.cardInset)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .glassEffect(.regular, in: .rect(cornerRadius: theme.cardRadius))
-            .glassEffectID("panel", in: glass)
+        VStack(alignment: .leading, spacing: theme.gap) {
+            header
+            path
+            snippet
+            editor
+            footer
         }
-        .scaleEffect(revealed ? 1 : 0.97)
+        .padding(.horizontal, theme.cardInset)
+        .padding(.top, theme.titlebarInset)
+        .padding(.bottom, theme.cardInset)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .opacity(revealed ? 1 : 0)
         .onAppear {
             withAnimation(theme.morph) { revealed = true }
@@ -238,7 +232,7 @@ final class CommentPanelController {
 
         let panel = NSPanel(
             contentRect: NSRect(x: 0, y: 0, width: theme.panelWidth, height: theme.panelMinimumHeight),
-            styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
+            styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
@@ -251,7 +245,6 @@ final class CommentPanelController {
         panel.isReleasedWhenClosed = false
         panel.isOpaque = false
         panel.backgroundColor = .clear
-        panel.hasShadow = true
         panel.isMovableByWindowBackground = true
         panel.minSize = NSSize(width: theme.panelMinimumWidth, height: theme.panelMinimumHeight)
 
@@ -266,10 +259,21 @@ final class CommentPanelController {
         )
         let hosting = NSHostingView(rootView: AnyView(view.environment(\.theme, theme)))
         hosting.frame = NSRect(x: 0, y: 0, width: theme.panelWidth, height: theme.panelMinimumHeight)
-        panel.contentView = hosting
         hosting.layoutSubtreeIfNeeded()
-
         let height = max(theme.panelMinimumHeight, hosting.fittingSize.height)
+
+        hosting.sizingOptions = []
+
+        let background = NSVisualEffectView()
+        background.material = .hudWindow
+        background.blendingMode = .behindWindow
+        background.state = .active
+        panel.contentView = background
+
+        hosting.frame = background.bounds
+        hosting.autoresizingMask = [.width, .height]
+        background.addSubview(hosting)
+
         panel.setContentSize(NSSize(width: theme.panelWidth, height: height))
         place(panel, near: capture.screenFrame, over: capture.isWindowNote)
 
