@@ -110,9 +110,8 @@ cp Signing.local.xcconfig.example Signing.local.xcconfig   # then write your tea
 
 ## Releasing
 
-`Scripts/release.sh` builds Release, refuses to go on unless the bundle carries a Developer ID
-signature, makes `dist/Koment-<version>.dmg`, notarizes it, staples the ticket and prints the
-SHA-256 for a Homebrew cask. It needs a stored notary credential once:
+`Scripts/release.sh` takes the build all the way to a notarized DMG. It needs a stored notary
+credential once:
 
 ```bash
 xcrun notarytool store-credentials koment-notary \
@@ -121,3 +120,35 @@ xcrun notarytool store-credentials koment-notary \
 
 Set `NOTARY_PROFILE` to use a profile under another name. Bump `CFBundleShortVersionString` in
 `Resources/Info.plist` before you run it — the DMG is named from it.
+
+The script stops before it reaches Apple unless the bundle passes three checks, each of which
+Apple would otherwise reject:
+
+| Check | Why it exists |
+| --- | --- |
+| A Developer ID signature | Ad-hoc is the default, so this catches a missing `Signing.local.xcconfig`. |
+| A secure timestamp | `Signing.xcconfig` asks for `--timestamp` in Release only. Debug keeps `--timestamp=none`. |
+| No `get-task-allow` | `xcodebuild build` injects the debug entitlement, so Release sets `CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO`. Debug keeps it, so a debugger still attaches. |
+
+Notarization then runs **twice**, and the order matters. The app is notarized and stapled first,
+and only then does the DMG get built from the stapled app and notarized in turn. A ticket stapled
+to the DMG alone does not travel with the app a user drags out of it, so that app would need a
+network on first launch. Homebrew copies the app out of the image, so this affects every brew
+install.
+
+The script prints the DMG path and its SHA-256 at the end. Both go into the cask.
+
+## The Homebrew tap
+
+The cask lives in [nandzz/homebrew-koment](https://github.com/nandzz/homebrew-koment), because
+`homebrew/cask` takes a project only once it has 75 stars, 30 forks or 30 watchers.
+
+After a release, set `version` and `sha256` in `Casks/koment.rb` to the values the release script
+printed, then check the cask before you push it:
+
+```bash
+brew style nandzz/koment
+brew audit --cask --online nandzz/koment/koment
+```
+
+Leave `--new` off. It adds the notability rule above, which applies only to `homebrew/cask`.

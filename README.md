@@ -9,8 +9,14 @@
 A macOS menu-bar app. Select code in any editor, press one shortcut, type a note.
 Claude Code reads your notes and applies them.
 
-[Download](https://github.com/nandzz/koment/releases) ·
-[Get started](#get-started) ·
+[![Release](https://img.shields.io/github/v/release/nandzz/koment?style=flat-square&color=1f6feb&label=release)](https://github.com/nandzz/koment/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/nandzz/koment/total?style=flat-square&color=1f6feb&label=downloads)](https://github.com/nandzz/koment/releases)
+[![macOS 26+](https://img.shields.io/badge/macOS-26%2B-black?style=flat-square&logo=apple&logoColor=white)](#you-also-need)
+[![Licence MIT](https://img.shields.io/badge/licence-MIT-1f6feb?style=flat-square)](LICENSE)
+
+[Install](#install) ·
+[Set up](#set-up) ·
+[Everyday use](#everyday-use) ·
 [How it works](docs/ARCHITECTURE.md) ·
 [Contribute](docs/DEVELOPMENT.md)
 
@@ -18,50 +24,46 @@ Claude Code reads your notes and applies them.
 
 ---
 
-## What Koment does
+## Install
 
-You read code and you see something to change, but you do not want to stop and change it now.
-Today you write a `// TODO`, or a note in another app, or you forget it.
+### With Homebrew
 
-Koment gives you a third option. Select the lines, press ⌘C twice, and type what you want.
-The note is saved with the code it quotes. Later, you run one command in Claude Code and
-Claude applies every note you left.
+```sh
+brew install --cask nandzz/koment/koment
+```
 
-Your notes never go into your project. There is no `// TODO` in the diff, no scratch file
-in the repository, and nothing to clean up afterwards.
+One command. It adds the tap and installs the app.
 
-## Features
+### Or download the app
+
+1. Download `Koment-<version>.dmg` from the
+   [latest release](https://github.com/nandzz/koment/releases/latest).
+2. Drag **Koment** into your **Applications** folder.
+3. Open it.
+
+The app is signed and notarized by Apple, so it opens with no warning and no right-click.
+
+> **Koment has no window of its own.** Look for its icon in the menu bar, at the top right
+> of your screen.
+
+### You also need
 
 | | |
 | --- | --- |
-| **Works in every editor** | Xcode, VS Code, a browser, Slack, a PDF — anything that shows text. Koment reads the selection through macOS, so it needs no plugin. |
-| **One gesture** | Press ⌘C twice, or use a shortcut of your own. The note panel opens on your selection. |
-| **Comments find their own file** | Koment finds the file and the line from the selected text, and remembers the code around it, so the note still fits after the file changes. |
-| **Claude Code applies them** | Run `/koment` in any repository. Claude reads the notes, changes the code, and closes each note with a record of what it changed. |
-| **Or run it from the app** | Press **▶ Run in Claude** in the dashboard and a Claude session opens in the app itself. |
-| **A dashboard for everything** | See every note, open or done, by project and by file. Filter, read, delete. |
-| **Notes without a file** | Comment on a Slack message, a Jira ticket or a web page. Koment keeps the window title and the address, and Claude works out the rest. |
-| **Fully private** | Everything stays in one file on your Mac. Koment sends nothing anywhere and has no account. |
+| **macOS 26** or later | The app does not launch on an earlier system. |
+| **[Claude Code](https://claude.com/claude-code)** | Working in your terminal. `brew install --cask claude-code` |
 
-## Requirements
+### Keeping it up to date
 
-- **macOS 26** or later. The app does not launch on an earlier system.
-- **[Claude Code](https://claude.com/claude-code)** installed and working in your terminal.
-
-## Install
-
-1. Download `Koment-<version>.dmg` from the
-   [Releases page](https://github.com/nandzz/koment/releases).
-2. Drag **Koment** into your **Applications** folder.
-3. Open it. The app is signed and notarized by Apple, so it opens with no warning and no
-   right-click.
-
-Koment has no window of its own. Look for its icon in the menu bar, at the top right of
-your screen.
+| Command | Does |
+| --- | --- |
+| `brew upgrade --cask koment` | Installs the newest version |
+| `brew uninstall --cask koment` | Removes the app, keeps your notes |
+| `brew uninstall --zap --cask koment` | Removes the app **and every note you ever took** |
 
 Do you prefer to build it yourself? See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
-## Get started
+## Set up
 
 A setup window opens the first time you launch the app. It has three rows, and each row has
 one button. Nothing happens until you press it.
@@ -92,6 +94,33 @@ You can open this window again at any time: **Setup…** in the menu-bar menu.
 Claude finds the code, makes the change, and closes the note.
 
 That is the whole loop. Everything below is detail.
+
+---
+
+## What Koment does
+
+You read code and you see something to change, but you do not want to stop and change it now.
+Today you write a `// TODO`, or a note in another app, or you forget it.
+
+Koment gives you a third option. Select the lines, press ⌘C twice, and type what you want.
+The note is saved with the code it quotes. Later, you run one command in Claude Code and
+Claude applies every note you left.
+
+Your notes never go into your project. There is no `// TODO` in the diff, no scratch file
+in the repository, and nothing to clean up afterwards.
+
+## Features
+
+| | |
+| --- | --- |
+| **Works in every editor** | Xcode, VS Code, a browser, Slack, a PDF — anything that shows text. Koment reads the selection through macOS, so it needs no plugin. |
+| **One gesture** | Press ⌘C twice, or use a shortcut of your own. The note panel opens on your selection. |
+| **Comments find their own file** | Koment finds the file and the line from the selected text, and remembers the code around it, so the note still fits after the file changes. |
+| **Claude Code applies them** | Run `/koment` in any repository. Claude reads the notes, changes the code, and closes each note with a record of what it changed. |
+| **Or run it from the app** | Press **▶ Run in Claude** in the dashboard and a Claude session opens in the app itself. |
+| **A dashboard for everything** | See every note, open or done, by project and by file. Filter, read, delete. |
+| **Notes without a file** | Comment on a Slack message, a Jira ticket or a web page. Koment keeps the window title and the address, and Claude works out the rest. |
+| **Fully private** | Everything stays in one file on your Mac. Koment sends nothing anywhere and has no account. |
 
 ## Everyday use
 
