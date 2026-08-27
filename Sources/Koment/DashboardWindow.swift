@@ -46,12 +46,7 @@ final class DashboardWindowController: NSObject, NSWindowDelegate {
         }
 
         let window = NSWindow(
-            contentRect: NSRect(
-                x: 0,
-                y: 0,
-                width: theme.windowWidth,
-                height: theme.windowHeight
-            ),
+            contentRect: NSRect(origin: .zero, size: openingSize()),
             styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -62,11 +57,16 @@ final class DashboardWindowController: NSObject, NSWindowDelegate {
             width: theme.windowMinimumWidth,
             height: theme.windowMinimumHeight
         )
+        window.collectionBehavior.insert(.fullScreenPrimary)
+        window.collectionBehavior.insert(.managed)
         window.isReleasedWhenClosed = false
         window.delegate = self
-        window.contentView = NSHostingView(
+
+        let hosting = NSHostingView(
             rootView: AnyView(DashboardView(model: model).environment(\.theme, theme))
         )
+        hosting.sizingOptions = []
+        window.contentView = hosting
         window.center()
 
         self.window = window
@@ -83,6 +83,17 @@ final class DashboardWindowController: NSObject, NSWindowDelegate {
 
     func terminateSessions() {
         model.terminal.terminateAll()
+    }
+
+    private func openingSize() -> NSSize {
+        let visible = (NSScreen.main ?? NSScreen.screens.first)?.visibleFrame
+        guard let visible else {
+            return NSSize(width: theme.windowWidth, height: theme.windowHeight)
+        }
+        return NSSize(
+            width: min(theme.windowWidth, visible.width - theme.gutter * 2),
+            height: min(theme.windowHeight, visible.height - theme.gutter * 2)
+        )
     }
 
     func windowWillUseStandardFrame(_ window: NSWindow, defaultFrame: NSRect) -> NSRect {
