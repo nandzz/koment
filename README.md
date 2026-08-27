@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="logo.png" width="120" alt="Koment">
+<img src="docs/images/logo.png" width="120" alt="Koment">
 
 # Koment
 
@@ -19,6 +19,8 @@ Claude Code reads your notes and applies them.
 [Everyday use](#everyday-use) ·
 [How it works](docs/ARCHITECTURE.md) ·
 [Contribute](docs/DEVELOPMENT.md)
+
+<img src="docs/images/koment-dashboard.png" width="900" alt="The Koment dashboard: a table of comments, the detail of the selected one, and Claude Code running below it">
 
 </div>
 
