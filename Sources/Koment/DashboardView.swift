@@ -12,14 +12,20 @@ struct DashboardView: View {
 
     var body: some View {
         GeometryReader { proxy in
+            let density = theme.density(for: proxy.size.width)
             VStack(spacing: 0) {
-                toolbar
-                table
-                CommentDetailView(model: model, openShortcut: openShortcut, deleteShortcut: deleteShortcut)
-                    .padding(.horizontal, theme.gutter)
+                toolbar(density)
+                table(density)
+                CommentDetailView(
+                    model: model,
+                    density: density,
+                    openShortcut: openShortcut,
+                    deleteShortcut: deleteShortcut
+                )
+                .padding(.horizontal, theme.gutter)
                 if model.terminalShown {
                     grip(in: proxy.size.height)
-                    TerminalPanelView(model: model.terminal) { model.toggleTerminal() }
+                    TerminalPanelView(model: model.terminal, density: density) { model.toggleTerminal() }
                         .frame(height: model.terminalHeight)
                         .padding(.horizontal, theme.gutter)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -71,50 +77,73 @@ struct DashboardView: View {
         searchFocused ? .none : KeyboardShortcut(.delete, modifiers: [])
     }
 
-    private var toolbar: some View {
-        HStack(spacing: theme.gap) {
-            filterChips
-            searchField
-            Text(model.summaryText)
-                .font(theme.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
+    private func toolbar(_ density: Theme.Density) -> some View {
+        HStack(spacing: density == .narrow ? theme.smallGap : theme.gap) {
+            filterChips(density)
+            searchField(density)
+            if density != .narrow {
+                Text(model.summaryText)
+                    .font(theme.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .fixedSize()
+            }
             Spacer(minLength: 0)
             Button { model.toggleTerminal() } label: {
-                Label(model.terminalTitle, systemImage: "apple.terminal")
+                if density.isCompact {
+                    Image(systemName: "apple.terminal")
+                } else {
+                    Label(model.terminalTitle, systemImage: "apple.terminal")
+                }
             }
             .buttonStyle(.glass)
             .help("Show or hide the terminal panel")
-            Button("Delete shown…") { model.confirmDeleteShown() }
-                .buttonStyle(.glass)
-                .disabled(model.rows.isEmpty)
+            Button { model.confirmDeleteShown() } label: {
+                if density.isCompact {
+                    Image(systemName: "trash")
+                } else {
+                    Text("Delete shown…")
+                }
+            }
+            .buttonStyle(.glass)
+            .disabled(model.rows.isEmpty)
+            .help("Delete every comment shown")
             Button { model.reload() } label: {
                 Image(systemName: "arrow.clockwise")
             }
             .buttonStyle(.glass)
             .help("Reload")
             Button { model.runSelection() } label: {
-                Label(model.runTitle, systemImage: "play.fill")
-                    .symbolEffect(.bounce, options: .nonRepeating, value: model.selection.count)
+                if density.isCompact {
+                    Image(systemName: "play.fill")
+                        .symbolEffect(.bounce, options: .nonRepeating, value: model.selection.count)
+                } else {
+                    Label(model.runTitle, systemImage: "play.fill")
+                        .symbolEffect(.bounce, options: .nonRepeating, value: model.selection.count)
+                }
             }
             .buttonStyle(.glassProminent)
             .keyboardShortcut("r", modifiers: .command)
             .disabled(!model.hasSelection)
+            .help(model.runTitle)
         }
         .controlSize(.small)
+        .fixedSize(horizontal: false, vertical: true)
         .padding(.horizontal, theme.gutter)
         .padding(.top, theme.titlebarInset)
         .padding(.bottom, theme.gap)
     }
 
-    private var filterChips: some View {
+    private func filterChips(_ density: Theme.Density) -> some View {
         GlassEffectContainer(spacing: theme.tightGap) {
             HStack(spacing: theme.tightGap) {
                 ForEach(CommentFilter.allCases, id: \.self) { option in
                     Button { model.select(option) } label: {
                         Text(option.title)
                             .font(theme.label)
-                            .padding(.horizontal, theme.gap)
+                            .lineLimit(1)
+                            .fixedSize()
+                            .padding(.horizontal, density == .narrow ? theme.smallGap : theme.gap)
                             .padding(.vertical, theme.smallGap)
                     }
                     .buttonStyle(.plain)
@@ -132,12 +161,12 @@ struct DashboardView: View {
         .animation(theme.snap, value: model.filter)
     }
 
-    private var searchField: some View {
+    private func searchField(_ density: Theme.Density) -> some View {
         HStack(spacing: theme.smallGap) {
             Image(systemName: "magnifyingglass")
                 .font(theme.caption)
                 .foregroundStyle(.secondary)
-            TextField("Note, file, project, app or window", text: $model.query)
+            TextField(density == .wide ? "Note, file, project, app or window" : "Search", text: $model.query)
                 .textFieldStyle(.plain)
                 .font(theme.caption)
                 .focused($searchFocused)
@@ -152,15 +181,17 @@ struct DashboardView: View {
         .padding(.horizontal, theme.gap)
         .padding(.vertical, theme.smallGap)
         .glassEffect(.regular, in: .capsule)
-        .frame(width: theme.searchWidth)
+        .frame(minWidth: theme.searchMinimumWidth, maxWidth: theme.searchWidth)
     }
 
-    private var table: some View {
+    private func table(_ density: Theme.Density) -> some View {
         Table(model.rows, selection: $model.selection, sortOrder: $model.sortOrder) {
-            TableColumn("When", value: \.createdAt) { comment in
-                CommentCellView(primary: comment.whenText, secondary: "")
+            if density != .narrow {
+                TableColumn("When", value: \.createdAt) { comment in
+                    CommentCellView(primary: comment.whenText, secondary: "")
+                }
+                .width(min: theme.whenColumn.minimum, ideal: theme.whenColumn.ideal, max: theme.whenColumn.maximum)
             }
-            .width(min: theme.whenColumn.minimum, ideal: theme.whenColumn.ideal, max: theme.whenColumn.maximum)
 
             TableColumn("Status", value: \.statusText) { comment in
                 CommentCellView(
@@ -171,22 +202,34 @@ struct DashboardView: View {
             }
             .width(min: theme.statusColumn.minimum, ideal: theme.statusColumn.ideal, max: theme.statusColumn.maximum)
 
-            TableColumn("Project", value: \.projectName) { comment in
-                CommentCellView(primary: comment.projectName, secondary: comment.projectFolder)
-                    .help(comment.projectRoot)
+            if density != .narrow {
+                TableColumn("Project", value: \.projectName) { comment in
+                    CommentCellView(primary: comment.projectName, secondary: comment.projectFolder)
+                        .help(comment.projectRoot)
+                }
+                .width(
+                    min: theme.projectColumn.minimum,
+                    ideal: theme.projectColumn.ideal,
+                    max: theme.projectColumn.maximum
+                )
             }
-            .width(min: theme.projectColumn.minimum, ideal: theme.projectColumn.ideal, max: theme.projectColumn.maximum)
 
-            TableColumn("App", value: \.capturedIn) { comment in
-                CommentCellView(primary: comment.capturedIn, secondary: comment.method)
+            if density == .wide {
+                TableColumn("App", value: \.capturedIn) { comment in
+                    CommentCellView(primary: comment.capturedIn, secondary: comment.method)
+                }
+                .width(min: theme.appColumn.minimum, ideal: theme.appColumn.ideal, max: theme.appColumn.maximum)
             }
-            .width(min: theme.appColumn.minimum, ideal: theme.appColumn.ideal, max: theme.appColumn.maximum)
 
             TableColumn("File", value: \.fileLabel) { comment in
                 CommentCellView(primary: comment.fileLabel, secondary: comment.folderText)
                     .help(comment.originText)
             }
-            .width(min: theme.fileColumn.minimum, ideal: theme.fileColumn.ideal, max: theme.fileColumn.maximum)
+            .width(
+                min: density == .narrow ? theme.narrowFileColumn.minimum : theme.fileColumn.minimum,
+                ideal: density == .narrow ? theme.narrowFileColumn.ideal : theme.fileColumn.ideal,
+                max: density == .narrow ? theme.narrowFileColumn.maximum : theme.fileColumn.maximum
+            )
 
             TableColumn("Note", value: \.note) { comment in
                 CommentCellView(primary: comment.note, secondary: "")
@@ -202,6 +245,7 @@ struct DashboardView: View {
                     .foregroundStyle(.tertiary)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: theme.emptyWidth)
+                    .padding(.horizontal, theme.gutter)
             }
         }
         .contextMenu(forSelectionType: InlineComment.ID.self) { ids in
@@ -304,6 +348,7 @@ struct CommentCellView: View {
 
 struct CommentDetailView: View {
     let model: DashboardModel
+    let density: Theme.Density
     let openShortcut: KeyboardShortcut?
     let deleteShortcut: KeyboardShortcut?
 
@@ -327,26 +372,29 @@ struct CommentDetailView: View {
                     .foregroundStyle(.tertiary)
                     .lineLimit(1)
                     .truncationMode(.tail)
-                Text(comment.snippetSummary)
-                    .font(theme.monoSmall)
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(2)
+                if density != .narrow {
+                    Text(comment.snippetSummary)
+                        .font(theme.monoSmall)
+                        .foregroundStyle(.tertiary)
+                        .lineLimit(2)
+                }
             } else {
                 Text(model.rows.isEmpty ? "" : "Select a comment to read it in full.")
                     .font(theme.strongBody)
                     .foregroundStyle(.tertiary)
+                    .lineLimit(2)
             }
             Spacer(minLength: 0)
             actions
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(height: theme.detailHeight)
-        .padding(theme.cardInset)
+        .frame(height: density == .narrow ? theme.compactDetailHeight : theme.detailHeight)
+        .padding(density == .narrow ? theme.gap : theme.cardInset)
         .glassEffect(.regular, in: .rect(cornerRadius: theme.cardRadius))
     }
 
     private var actions: some View {
-        HStack(spacing: theme.smallGap) {
+        HStack(spacing: density == .narrow ? theme.tightGap : theme.smallGap) {
             Button("Open file") { model.openSelection() }
                 .keyboardShortcut(openShortcut)
                 .disabled(!model.hasFile)
@@ -361,6 +409,7 @@ struct CommentDetailView: View {
         }
         .buttonStyle(.glass)
         .controlSize(.small)
+        .lineLimit(1)
     }
 }
 
@@ -406,7 +455,7 @@ struct NoteEditorSheet: View {
             .controlSize(.small)
         }
         .padding(theme.gutter)
-        .frame(width: theme.sheetWidth)
+        .frame(minWidth: theme.sheetMinimumWidth, idealWidth: theme.sheetWidth, maxWidth: theme.sheetWidth)
     }
 
     private var trimmed: String {

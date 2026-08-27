@@ -265,7 +265,7 @@ struct TerminalTabView: View {
         }
         .padding(.horizontal, theme.smallGap)
         .padding(.vertical, theme.tightGap)
-        .frame(maxWidth: theme.tabMaximumWidth)
+        .frame(minWidth: theme.tabMinimumWidth, maxWidth: theme.tabMaximumWidth)
         .glassEffect(
             selected
                 ? .regular.tint(theme.accent.opacity(theme.chipTint)).interactive()
@@ -288,6 +288,7 @@ struct TerminalTabView: View {
 
 struct TerminalPanelView: View {
     let model: TerminalModel
+    let density: Theme.Density
     let onHide: () -> Void
 
     @Environment(\.theme) private var theme
@@ -306,36 +307,58 @@ struct TerminalPanelView: View {
     }
 
     private var bar: some View {
-        HStack(spacing: theme.gap) {
-            GlassEffectContainer(spacing: theme.tightGap) {
-                HStack(spacing: theme.tightGap) {
-                    ForEach(model.sessions) { session in
-                        TerminalTabView(
-                            session: session,
-                            selected: session.id == model.selectedID,
-                            namespace: glass,
-                            onSelect: { model.select(session.id) },
-                            onClose: { model.close(session.id) }
-                        )
+        HStack(spacing: density == .narrow ? theme.smallGap : theme.gap) {
+            ScrollView(.horizontal) {
+                GlassEffectContainer(spacing: theme.tightGap) {
+                    HStack(spacing: theme.tightGap) {
+                        ForEach(model.sessions) { session in
+                            TerminalTabView(
+                                session: session,
+                                selected: session.id == model.selectedID,
+                                namespace: glass,
+                                onSelect: { model.select(session.id) },
+                                onClose: { model.close(session.id) }
+                            )
+                        }
                     }
+                    .padding(.vertical, theme.hairGap)
                 }
+                .animation(theme.snap, value: model.selectedID)
             }
-            .animation(theme.snap, value: model.selectedID)
+            .scrollIndicators(.hidden)
+            .scrollBounceBehavior(.basedOnSize)
+            .fixedSize(horizontal: false, vertical: true)
 
-            Text(model.statusText)
-                .font(theme.caption)
-                .foregroundStyle(.tertiary)
-                .lineLimit(1)
-                .truncationMode(.tail)
+            if density == .wide {
+                Text(model.statusText)
+                    .font(theme.caption)
+                    .foregroundStyle(.tertiary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            }
 
             Spacer(minLength: 0)
 
-            Button("Restart") { model.restartSelected() }
-                .buttonStyle(.glass)
-                .disabled(model.selected.map { $0.state.isRunning } ?? true)
-            Button("Close") { model.closeSelected() }
-                .buttonStyle(.glass)
-                .disabled(model.selectedID == .none)
+            Button { model.restartSelected() } label: {
+                if density.isCompact {
+                    Image(systemName: "arrow.clockwise")
+                } else {
+                    Text("Restart")
+                }
+            }
+            .buttonStyle(.glass)
+            .disabled(model.selected.map { $0.state.isRunning } ?? true)
+            .help("Restart this session")
+            Button { model.closeSelected() } label: {
+                if density.isCompact {
+                    Image(systemName: "xmark")
+                } else {
+                    Text("Close")
+                }
+            }
+            .buttonStyle(.glass)
+            .disabled(model.selectedID == .none)
+            .help("Close this session")
             Button(action: onHide) {
                 Image(systemName: "chevron.down")
             }

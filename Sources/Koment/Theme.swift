@@ -8,6 +8,16 @@ struct Theme {
         let maximum: CGFloat
     }
 
+    enum Density {
+        case wide
+        case compact
+        case narrow
+
+        var isCompact: Bool {
+            self != .wide
+        }
+    }
+
     let cardRadius: CGFloat = 22
     let boxRadius: CGFloat = 12
     let tabRadius: CGFloat = 9
@@ -28,6 +38,7 @@ struct Theme {
     let noteMinimumHeight: CGFloat = 96
     let snippetLines = 2
     let detailHeight: CGFloat = 176
+    let compactDetailHeight: CGFloat = 150
     let commentsMinimumHeight: CGFloat = 300
     let terminalMinimumHeight: CGFloat = 160
     let terminalHeight: CGFloat = 280
@@ -37,13 +48,18 @@ struct Theme {
     let dotSize: CGFloat = 7
     let closeGlyph: CGFloat = 8
     let searchWidth: CGFloat = 250
+    let searchMinimumWidth: CGFloat = 110
+    let tabMinimumWidth: CGFloat = 96
     let tabMaximumWidth: CGFloat = 190
     let emptyWidth: CGFloat = 380
     let windowWidth: CGFloat = 1020
     let windowHeight: CGFloat = 760
-    let windowMinimumWidth: CGFloat = 760
-    let windowMinimumHeight: CGFloat = 580
+    let windowMinimumWidth: CGFloat = 480
+    let windowMinimumHeight: CGFloat = 480
+    let compactWidth: CGFloat = 940
+    let narrowWidth: CGFloat = 720
     let sheetWidth: CGFloat = 560
+    let sheetMinimumWidth: CGFloat = 380
     let sheetNoteHeight: CGFloat = 180
     let readingWidth: CGFloat = 620
     let readingHeight: CGFloat = 660
@@ -55,6 +71,7 @@ struct Theme {
     let projectColumn = ColumnWidth(minimum: 96, ideal: 150, maximum: 260)
     let appColumn = ColumnWidth(minimum: 68, ideal: 100, maximum: 150)
     let fileColumn = ColumnWidth(minimum: 130, ideal: 230, maximum: 420)
+    let narrowFileColumn = ColumnWidth(minimum: 96, ideal: 150, maximum: 300)
 
     let heading = Font.system(size: 16, weight: .semibold)
     let title = Font.system(size: 13, weight: .semibold)
@@ -76,6 +93,12 @@ struct Theme {
 
     let morph = Animation.smooth(duration: 0.3)
     let snap = Animation.snappy(duration: 0.18)
+
+    func density(for width: CGFloat) -> Density {
+        if width < narrowWidth { return .narrow }
+        if width < compactWidth { return .compact }
+        return .wide
+    }
 
     func tint(_ status: CommentStatus) -> Color {
         switch status {
