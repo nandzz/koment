@@ -1,0 +1,3 @@
+import MCPServer
+
+Server().serve()
