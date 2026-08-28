@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1B4BBA133040662900C9B294 /* koment-app.icon in Resources */ = {isa = PBXBuildFile; fileRef = 1B4BBA123040662900C9B294 /* koment-app.icon */; };
 		1B4BBA19304066B800C9B294 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B4BBA18304066B800C9B294 /* Assets.xcassets */; };
-		1B4BBA8930406A3D00C9B294 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B4BBA8830406A3D00C9B294 /* logo.png */; };
 		CC0000000000000000000040 /* libKomentCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000008 /* libKomentCore.a */; };
 		CC0000000000000000000041 /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = CC0000000000000000000051 /* SwiftTerm */; };
 		CC0000000000000000000042 /* libKomentCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000008 /* libKomentCore.a */; };
@@ -104,7 +103,6 @@
 /* Begin PBXFileReference section */
 		1B4BBA123040662900C9B294 /* koment-app.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "koment-app.icon"; sourceTree = "<group>"; };
 		1B4BBA18304066B800C9B294 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		1B4BBA8830406A3D00C9B294 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
 		CC0000000000000000000007 /* Koment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Koment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC0000000000000000000008 /* libKomentCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKomentCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC0000000000000000000009 /* KomentMCP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = KomentMCP; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -190,7 +188,6 @@
 		CC0000000000000000000002 = {
 			isa = PBXGroup;
 			children = (
-				1B4BBA8830406A3D00C9B294 /* logo.png */,
 				1B4BBA123040662900C9B294 /* koment-app.icon */,
 				1B4BBA18304066B800C9B294 /* Assets.xcassets */,
 				CC0000000000000000000004 /* Sources/Koment */,
@@ -444,7 +441,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B4BBA8930406A3D00C9B294 /* logo.png in Resources */,
 				1B4BBA133040662900C9B294 /* koment-app.icon in Resources */,
 				1B4BBA19304066B800C9B294 /* Assets.xcassets in Resources */,
 				CC00000000000000000000B1 /* koment.md in Resources */,
