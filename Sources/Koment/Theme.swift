@@ -35,6 +35,7 @@ struct Theme {
     let panelMinimumWidth: CGFloat = 360
     let panelMinimumHeight: CGFloat = 240
     let panelGap: CGFloat = 10
+    let panelBottomInset: CGFloat = 28
     let noteMinimumHeight: CGFloat = 96
     let snippetLines = 2
     let detailHeight: CGFloat = 176

@@ -14,6 +14,8 @@ struct MainMenu {
     private func appMenu(_ application: NSApplication) -> NSMenuItem {
         let name = ProcessInfo.processInfo.processName
         let submenu = NSMenu(title: name)
+        submenu.addItem(item("About \(name)", #selector(NSApplication.orderFrontStandardAboutPanel(_:)), ""))
+        submenu.addItem(.separator())
         submenu.addItem(item("Hide \(name)", #selector(NSApplication.hide(_:)), "h"))
 
         let hideOthers = item("Hide Others", #selector(NSApplication.hideOtherApplications(_:)), "h")

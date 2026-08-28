@@ -100,7 +100,7 @@ struct CommentPanelView: View {
         }
         .padding(.horizontal, theme.cardInset)
         .padding(.top, theme.titlebarInset)
-        .padding(.bottom, theme.cardInset)
+        .padding(.bottom, theme.panelBottomInset)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .opacity(revealed ? 1 : 0)
         .onAppear {

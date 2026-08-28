@@ -40,7 +40,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         startCopyTap()
 
         signal.observe { [weak self] in self?.dashboard?.reload() }
+        observeWindowClosing()
         showSetupIfNeeded()
+    }
+
+    private func observeWindowClosing() {
+        NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: .none,
+            queue: .main
+        ) { [weak self] _ in
+            // the window is still visible while it closes, so the count is only right on the next pass
+            DispatchQueue.main.async { self?.updateActivationPolicy() }
+        }
+    }
+
+    private func openWindow(_ show: () -> Void) {
+        NSApp.setActivationPolicy(.regular)
+        show()
+    }
+
+    private func updateActivationPolicy() {
+        let onScreen = NSApp.windows.contains { $0.isVisible && $0.canBecomeMain }
+        NSApp.setActivationPolicy(onScreen ? .regular : .accessory)
     }
 
     private func openStore() -> CommentStore? {
@@ -87,6 +109,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(withTitle: "Dashboard…", action: #selector(showDashboard), keyEquivalent: "d")
         menu.addItem(withTitle: "Setup…", action: #selector(showSetup), keyEquivalent: "")
         menu.addItem(withTitle: "How it works…", action: #selector(showHelp), keyEquivalent: "")
+        if let version = versionItem() { menu.addItem(version) }
         menu.addItem(.separator())
         menu.addItem(withTitle: "Reveal database in Finder", action: #selector(revealDatabase), keyEquivalent: "")
         menu.addItem(withTitle: "Open diagnostics log", action: #selector(openDiagnostics), keyEquivalent: "")
@@ -98,6 +121,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             item.target = self
         }
         return menu
+    }
+
+    private func versionItem() -> NSMenuItem? {
+        guard !Bundle.main.shortVersion.isEmpty else { return .none }
+        let item = NSMenuItem(title: "Version \(Bundle.main.shortVersion)", action: .none, keyEquivalent: "")
+        item.isEnabled = false
+        return item
     }
 
     private func refreshTriggerLines() {
@@ -232,19 +262,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func showSetupIfNeeded() {
         let controller = setup()
         guard !controller.isComplete else { return }
-        controller.show()
+        openWindow { controller.show() }
     }
 
     @objc private func showSetup() {
-        setup().show()
+        openWindow { setup().show() }
     }
 
     @objc private func showDashboard() {
-        dashboard?.show()
+        openWindow { dashboard?.show() }
     }
 
     @objc private func showHelp() {
-        help().show()
+        openWindow { help().show() }
     }
 
     private func help() -> HelpWindowController {
@@ -303,5 +333,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         alert.alertStyle = .informational
         NSApp.activate(ignoringOtherApps: true)
         alert.runModal()
+    }
+}
+
+extension Bundle {
+    var shortVersion: String {
+        infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     }
 }
